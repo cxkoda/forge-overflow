@@ -7,23 +7,19 @@ contract Item {}
 
 contract ItemTest is Test {
     function _canReceiveETH(address payable receiver) internal returns (bool) {
-        address sender = makeAddr("sender");
-        uint256 startSenderBalance = sender.balance;
         uint256 startReceiverBalance = receiver.balance;
 
-        vm.deal(sender, 1);
-        vm.prank(sender);
+        vm.deal(address(this), 1);
         (bool success,) = receiver.call{value: 1}("");
 
-        vm.deal(sender, startSenderBalance);
         vm.deal(receiver, startReceiverBalance);
         return success;
     }
 
-    function testForwardETH(address payable target, uint8 num) public {
+    function testForwardETH(address payable target) public {
         vm.assume(_canReceiveETH(target));
 
-        for (uint256 i; i < num; ++i) {
+        for (uint256 i; i < 50; ++i) {
             Item item = new Item();
             vm.assume(address(item) != address(target));
         }
